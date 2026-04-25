@@ -1,0 +1,29 @@
+name: Publish Blogs
+
+on:
+  push:
+    paths:
+      - "blogs/**/*.md"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install deps
+        run: npm install
+
+      - name: Publish Blogs
+        run: |
+          for file in $(find blogs -name "*.md"); do
+            node scripts/publish.js "$file"
+          done
+        env:
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}

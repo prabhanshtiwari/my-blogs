@@ -17,18 +17,12 @@ if (fs.existsSync(dbPath)) {
   db = JSON.parse(fs.readFileSync(dbPath, "utf-8"));
 }
 
-// ===== SKIP IF ALREADY PUBLISHED =====
-if (db[filePath]) {
-  console.log("⏩ Skipping already published:", filePath);
-  process.exit(0);
-}
-
 // ===== READ FILE =====
 const file = fs.readFileSync(filePath, "utf-8");
 const { data, content } = matter(file);
 
 // ===== VALIDATION =====
-if (!data.title || !data.tags || !data.published) {
+if (!data.title || !data.tags || typeof data.published === "undefined") {
   console.error("❌ Missing required frontmatter (title, tags, published)");
   process.exit(1);
 }
@@ -54,11 +48,20 @@ if (data.date) {
   }
 }
 
-// ===== PUBLISH =====
+// ===== CREATE OR UPDATE =====
 async function publishToDevto() {
   try {
-    const res = await fetch("https://dev.to/api/articles", {
-      method: "POST",
+    const existing = db[filePath];
+
+    const method = existing ? "PUT" : "POST";
+    const url = existing
+      ? `https://dev.to/api/articles/${existing.id}`
+      : "https://dev.to/api/articles";
+
+    console.log(existing ? "♻️ Updating..." : "🚀 Creating...");
+
+    const res = await fetch(url, {
+      method,
       headers: {
         "api-key": process.env.DEVTO_API_KEY,
         "Content-Type": "application/json",
@@ -81,11 +84,12 @@ async function publishToDevto() {
 
     const result = await res.json();
 
-    console.log("✅ Published:", result.url);
+    console.log(existing ? "♻️ Updated:" : "✅ Published:", result.url);
 
-    // ===== SAVE TO DB =====
+    // ===== SAVE STATE =====
     db[filePath] = {
-      published: true,
+      id: result.id, // 👈 CRITICAL FOR UPDATES
+      title: data.title,
       url: result.url,
       date: new Date().toISOString(),
     };

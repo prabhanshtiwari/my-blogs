@@ -8,7 +8,6 @@ description: "Clean imports aren't just aesthetics — they're architecture. Lea
 coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=400&fit=crop"
 readingTime: "8 min read"
 ---
-
 # ⚡ Advanced Path Aliases in Vite — Stop Writing `../../` Forever
 
 > *Clean imports aren't just aesthetics — they're architecture.*
@@ -518,4 +517,4 @@ Set up your aliases today. Future-you will send a thank-you note. 🙏
 
 ---
 
-**Tags:** `#vite` `#react` `#typescript` `#dx` `#frontend` `#webdev` `#javascript` `#aliases`
+**Tags:** `#vite` `#react` `#typescript` `#webdev`

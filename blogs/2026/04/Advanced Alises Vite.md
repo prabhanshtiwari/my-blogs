@@ -1,7 +1,7 @@
 ---
 title: "⚡ Advanced Path Aliases in Vite — Stop Writing ../../ Forever"
 date: "2026-04-26"
-tags: ["vite", "react", "typescript", "dx", "frontend", "webdev", "javascript", "aliases"]
+tags: ["vite", "react", "typescript", "javascript"]
 published: true
 author: "Prabhansh Tiwari"
 description: "Clean imports aren't just aesthetics — they're architecture. Learn how to set up advanced path aliases in Vite and TypeScript to eliminate relative path hell forever."

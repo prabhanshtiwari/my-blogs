@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import fetch from "node-fetch";
 
 const filePath = process.argv[2];
 
@@ -10,23 +9,41 @@ if (!filePath) {
   process.exit(1);
 }
 
-// Read file
+// ===== LOAD DB =====
+const dbPath = "./published.json";
+let db = {};
+
+if (fs.existsSync(dbPath)) {
+  db = JSON.parse(fs.readFileSync(dbPath, "utf-8"));
+}
+
+// ===== SKIP IF ALREADY PUBLISHED =====
+if (db[filePath]) {
+  console.log("⏩ Skipping already published:", filePath);
+  process.exit(0);
+}
+
+// ===== READ FILE =====
 const file = fs.readFileSync(filePath, "utf-8");
 const { data, content } = matter(file);
 
-// Extract year/month from folder
-const parts = filePath.split(path.sep);
+// ===== VALIDATION =====
+if (!data.title || !data.tags || !data.published) {
+  console.error("❌ Missing required frontmatter (title, tags, published)");
+  process.exit(1);
+}
 
+// ===== EXTRACT YEAR/MONTH =====
+const parts = filePath.split(path.sep);
 const year = parts[1];
 const month = parts[2];
 
-// Validate
 if (!year || !month) {
   console.error("❌ Invalid folder structure");
   process.exit(1);
 }
 
-// Validate date vs folder
+// ===== DATE VALIDATION =====
 if (data.date) {
   const d = new Date(data.date);
   const metaYear = String(d.getFullYear());
@@ -37,29 +54,50 @@ if (data.date) {
   }
 }
 
-// Publish to Dev.to
+// ===== PUBLISH =====
 async function publishToDevto() {
-  const res = await fetch("https://dev.to/api/articles", {
-    method: "POST",
-    headers: {
-      "api-key": process.env.DEVTO_API_KEY,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      article: {
-        title: data.title,
-        published: data.published,
-        tags: [...data.tags, year, month],
-        body_markdown: content,
+  try {
+    const res = await fetch("https://dev.to/api/articles", {
+      method: "POST",
+      headers: {
+        "api-key": process.env.DEVTO_API_KEY,
+        "Content-Type": "application/json",
       },
-    }),
-  });
+      body: JSON.stringify({
+        article: {
+          title: data.title,
+          published: data.published,
+          tags: [...data.tags, year, month],
+          body_markdown: content,
+        },
+      }),
+    });
 
-  const result = await res.json();
-  console.log("✅ Published:", result.url || result);
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("❌ Dev.to Error:", err);
+      process.exit(1);
+    }
+
+    const result = await res.json();
+
+    console.log("✅ Published:", result.url);
+
+    // ===== SAVE TO DB =====
+    db[filePath] = {
+      published: true,
+      url: result.url,
+      date: new Date().toISOString(),
+    };
+
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+  } catch (err) {
+    console.error("❌ Unexpected Error:", err);
+    process.exit(1);
+  }
 }
 
-// Run
+// ===== RUN =====
 (async () => {
   await publishToDevto();
 })();

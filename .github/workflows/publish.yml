@@ -4,26 +4,45 @@ on:
   push:
     paths:
       - "blogs/**/*.md"
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # ✅ Checkout latest code
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      # ✅ Setup Node (future-proof)
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # ✅ Install dependencies
       - name: Install deps
         run: npm install
 
+      # ✅ Debug (see what files are detected)
+      - name: Debug files
+        run: find blogs -name "*.md"
+
+      # ✅ Publish blogs safely
       - name: Publish Blogs
         run: |
-          for file in $(find blogs -name "*.md"); do
+          set -e
+          find blogs -name "*.md" -print0 | while IFS= read -r -d '' file; do
+            echo "📄 Processing $file"
             node scripts/publish.js "$file"
           done
         env:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+
+      # ✅ Save published.json back to repo
+      - name: Commit published state
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add published.json
+          git commit -m "update published posts" || echo "No changes"
+          git push

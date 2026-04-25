@@ -8,4 +8,4 @@ published: true
 # My First Blog
 
 This is my first automated blog 🚀
-Updated content
+Updated content 1

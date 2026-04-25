@@ -1,13 +1,11 @@
 ---
 title: "⚡ Advanced Path Aliases in Vite — Stop Writing ../../ Forever"
-date: "2026-04-26"
-tags: ["vite", "react", "typescript", "javascript"]
-published: true
-author: "Prabhansh Tiwari"
-description: "Clean imports aren't just aesthetics — they're architecture. Learn how to set up advanced path aliases in Vite and TypeScript to eliminate relative path hell forever."
-coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=400&fit=crop"
-readingTime: "8 min read"
+published: false
+description: "Set up advanced @component, @hooks, @utils path aliases in Vite + TypeScript to eliminate messy relative imports forever."
+tags: vite, react, typescript, webdev
+cover_image: https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=400&fit=crop
 ---
+
 # ⚡ Advanced Path Aliases in Vite — Stop Writing `../../` Forever
 
 > *Clean imports aren't just aesthetics — they're architecture.*
@@ -516,5 +514,3 @@ Set up your aliases today. Future-you will send a thank-you note. 🙏
 *Found this helpful? Share it with your team — especially the one who still writes `../../../../`.*
 
 ---
-
-**Tags:** `#vite` `#react` `#typescript` `#webdev`

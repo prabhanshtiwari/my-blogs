@@ -70,7 +70,7 @@ async function publishToDevto() {
         article: {
           title: data.title,
           published: data.published,
-          tags: [...data.tags, year, month],
+          tags: data.tags,
           body_markdown: content,
         },
       }),

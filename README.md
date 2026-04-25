@@ -1,11 +1,10 @@
-# my-blogs
 # 📝 My Blogs — Automated Dev.to Publishing
 
 This repo lets you:
 
-* Write blogs in Markdown
-* Push to GitHub
-* Automatically send them to Dev.to as **drafts**
+- Write blogs in Markdown
+- Push to GitHub
+- Automatically send them to Dev.to as **drafts**
 
 ---
 
@@ -71,11 +70,31 @@ git push
 
 ---
 
-### 5. What Happens Next
+### 5. If Push Fails (Rebase Fix)
 
-* GitHub Actions runs automatically
-* Your blog is sent to Dev.to
-* It appears as a **draft**
+If you see `non-fast-forward` error, run:
+
+```bash
+git pull --rebase
+```
+
+Then:
+
+```bash
+git add .
+git rebase --continue   # only if conflicts appear
+git push
+```
+
+👉 This syncs your local branch with GitHub before pushing.
+
+---
+
+### 6. What Happens Next
+
+- GitHub Actions runs automatically
+- Your blog is sent to Dev.to
+- It appears as a **draft**
 
 👉 You publish it manually from Dev.to
 
@@ -83,10 +102,10 @@ git push
 
 ## ⚠️ Rules (Important)
 
-* Max **4 tags**
-* Use array format for tags
-* Keep `published: false`
-* Use clean file names (no spaces)
+- Max **4 tags**
+- Use array format for tags
+- Keep `published: false`
+- Use clean file names (no spaces)
 
 ---
 
